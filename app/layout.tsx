@@ -10,14 +10,12 @@ export async function generateMetadata(): Promise<Metadata> {
     title: farcasterConfig.miniapp.name,
     description: farcasterConfig.miniapp.description,
     other: {
+      "base:app_id": "6980f04eb46c4b281e23f9f2",
       "fc:frame": JSON.stringify({
         version: farcasterConfig.miniapp.version,
-
-        // ✅ FIX: no heroImageUrl reference
-        imageUrl: `${farcasterConfig.miniapp.homeUrl}/hero.png`,
-
+        imageUrl: farcasterConfig.miniapp.heroImageUrl,
         button: {
-          title: `Join the ${farcasterConfig.miniapp.name} Waitlist`,
+          title: `Launch ${farcasterConfig.miniapp.name}`,
           action: {
             name: `Launch ${farcasterConfig.miniapp.name}`,
             type: "launch_frame",
