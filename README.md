@@ -42,7 +42,7 @@ Base Gas Buddy is an independent utility application built for informational pur
 
 No token
 
-No financial advice
+No financial advice.
 
 No wallet custody.
 
