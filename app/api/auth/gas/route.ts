@@ -1,31 +1,28 @@
+export const runtime = "nodejs";
+
 import { NextResponse } from "next/server";
+import { JsonRpcProvider } from "ethers";
 
 const BASE_RPC = "https://mainnet.base.org";
 
 export async function GET() {
   try {
-    const res = await fetch(BASE_RPC, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "eth_gasPrice",
-        params: [],
-      }),
-    });
+    const provider = new JsonRpcProvider(BASE_RPC);
+    const feeData = await provider.getFeeData();
 
-    const json = await res.json();
-
-    const gasWei = parseInt(json.result, 16);
-    const gasGwei = gasWei / 1e9;
+    const current = feeData.maxFeePerGas
+      ? Number(feeData.maxFeePerGas) / 1e9
+      : 0;
 
     return NextResponse.json({
-      current: Number(gasGwei.toFixed(2)),
+      current,
+      low: current * 0.8,
+      average: current,
+      high: current * 1.3,
     });
-  } catch {
+  } catch (err) {
     return NextResponse.json(
-      { error: "Failed to fetch gas" },
+      { error: "Failed to fetch Base gas" },
       { status: 500 }
     );
   }
