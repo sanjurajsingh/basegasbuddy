@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <div style={{ padding: 24 }}>
       <h1>⛽ Base Gas Buddy</h1>
-<p><strong>Live Base gas insights — optimized for everyday transactions</strong></p>
+<p><strong>Live Base gas insights - optimized for everyday transactions</strong></p>
 <p>Is now a good time to transact?</p>
 
 
