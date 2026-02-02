@@ -1,52 +1,6 @@
-# ⛽ Base Gas Buddy — Mini App
+# ⛽ Base Gas Buddy Mini App
 
-**Live Base gas insights — optimized for everyday transactions.**
-
-Base Gas Buddy is a lightweight Mini App that helps users decide **when to transact on Base** by showing real-time gas prices, 24-hour statistics, and a clear **SEND NOW / WAIT** recommendation.
-
-Built for the **Base app** and **Farcaster Mini Apps**.
-
----
-
-## ✨ Features
-
-- ⚡ Real-time Base gas price
-- 📊 24h Low / Average / High tracking
-- ✅ Simple “SEND NOW” or “WAIT” indicator
-- 🧠 No wallets, no friction, no noise
-- 🔗 Works inside Base app & Farcaster
-
----
-
-## 🧱 Tech Stack
-
-- Next.js (App Router)
-- Base Mini App SDK
-- Farcaster Manifest
-- Node.js runtime
-- Vercel (hosting)
-
----
-
-## 🔧 Prerequisites
-
-- Farcaster account
-- Base app account
-- Vercel account
-- Node.js 18+
-
----
-
-## 🚀 Getting Started
-
-### 1️⃣ Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd base-gas-buddy
-# ⛽ Base Gas Buddy — Mini App
-
-**Live Base gas insights — optimized for everyday transactions.**
+**Live Base gas insights optimized for everyday transactions.**
 
 Base Gas Buddy is a lightweight Mini App that helps users decide **when to transact on Base** by showing real-time gas prices, 24-hour statistics, and a clear **SEND NOW / WAIT** recommendation.
 
@@ -80,7 +34,7 @@ Built for the **Base app** and **Farcaster Mini Apps**.
 - Base app account
 - Vercel account
 - Node.js 18+
-
+  
 ---
 🛡️ Disclaimer
 
