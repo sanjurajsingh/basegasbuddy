@@ -44,7 +44,7 @@ No token
 
 No financial advice
 
-No wallet custody
+No wallet custody.
 
 Not affiliated with Coinbase or Base beyond platform usage.
 
