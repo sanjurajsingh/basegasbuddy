@@ -13,24 +13,12 @@ export const farcasterConfig = {
     payload: "",
     signature: ""
   },
-  miniapp: {
-    version: "1",
-    name: "Cubey", 
-    subtitle: "Your AI Ad Companion", 
-    description: "Ads",
-    screenshotUrls: [`${ROOT_URL}/screenshot-portrait.png`],
-    iconUrl: `${ROOT_URL}/blue-icon.png`,
-    splashImageUrl: `${ROOT_URL}/blue-hero.png`,
-    splashBackgroundColor: "#000000",
-    homeUrl: ROOT_URL,
-    webhookUrl: `${ROOT_URL}/api/webhook`,
-    primaryCategory: "social",
-    tags: ["marketing", "ads", "quickstart", "waitlist"],
-    heroImageUrl: `${ROOT_URL}/blue-hero.png`, 
-    tagline: "",
-    ogTitle: "",
-    ogDescription: "",
-    ogImageUrl: `${ROOT_URL}/blue-hero.png`,
-  },
-} as const;
+ miniapp: {
+  version: "1",
+  name: "Base Gas Buddy",
+  subtitle: "Is now a good time to transact?",
+  description: "Real-time Base gas tracker with send or wait guidance.",
+  primaryCategory: "finance",
+  tags: ["base", "gas", "fees", "tools"],
+}
 
