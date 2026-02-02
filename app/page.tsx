@@ -1,127 +1,73 @@
 "use client";
-import { useState, useEffect } from "react";
-import sdk from "@farcaster/miniapp-sdk";
-import { useMiniApp } from "./providers/MiniAppProvider";
-import { useRouter } from "next/navigation";
-import { farcasterConfig } from "../farcaster.config";
-import styles from "./page.module.css";
 
-interface AuthResponse {
-  success: boolean;
-  user?: {
-    fid: number; // FID is the unique identifier for the user
-    issuedAt?: number;
-    expiresAt?: number;
-  };
-  message?: string; // Error messages come as 'message' not 'error'
-}
+import { useEffect, useState } from "react";
 
+const BASE_RPC = "https://mainnet.base.org";
 
 export default function Home() {
-  const { context, isReady } = useMiniApp();
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-  const router = useRouter();
- 
-  
-
-  // If you need to verify the user's identity, you can use the SDK's quickAuth.
-  // This will verify the user's signature and return the user's FID. You can update
-  // this to meet your needs. See the /app/api/auth/route.ts file for more details.
-  // Note: If you don't need to verify the user's identity, you can get their FID and other user data
-  // via `context.user.fid`.
-  const [authData, setAuthData] = useState<AuthResponse | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [authError, setAuthError] = useState<Error | null>(null);
+  const [current, setCurrent] = useState<number | null>(null);
+  const [low, setLow] = useState<number | null>(null);
+  const [avg, setAvg] = useState<number | null>(null);
+  const [high, setHigh] = useState<number | null>(null);
+  const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
-    const authenticate = async () => {
-      try {
-        const response = await sdk.quickAuth.fetch('/api/auth');
-        const data = await response.json();
-        setAuthData(data);
-      } catch (err) {
-        setAuthError(err as Error);
-      } finally {
-        setIsAuthLoading(false);
-      }
-    };
+    loadGas();
+  }, []);
 
-    if (isReady) {
-      authenticate();
+  async function loadGas() {
+    try {
+      const res = await fetch(BASE_RPC, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "eth_feeHistory",
+          params: ["0x500", "latest", []], // recent blocks
+        }),
+      });
+
+      const json = await res.json();
+      const fees = json.result.baseFeePerGas.map(
+        (v: string) => parseInt(v, 16) / 1e9
+      );
+
+      const cur = fees[fees.length - 1];
+      const min = Math.min(...fees);
+      const max = Math.max(...fees);
+      const average = fees.reduce((a: number, b: number) => a + b, 0) / fees.length;
+
+      setCurrent(+cur.toFixed(2));
+      setLow(+min.toFixed(2));
+      setHigh(+max.toFixed(2));
+      setAvg(+average.toFixed(2));
+
+      if (cur <= average) setStatus("🟢 SEND NOW");
+      else if (cur < max) setStatus("🟡 WAIT");
+      else setStatus("🔴 EXPENSIVE");
+    } catch (e) {
+      setStatus("Failed to load gas");
     }
-  }, [isReady]);
-
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    // Check authentication first
-    if (isAuthLoading) {
-      setError("Please wait while we verify your identity...");
-      return;
-    }
-
-    if (authError || !authData?.success) {
-      setError("Please authenticate to join the waitlist");
-      return;
-    }
-
-    if (!email) {
-      setError("Please enter your email address");
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-
-    // TODO: Save email to database/API with user FID
-    console.log("Valid email submitted:", email);
-    console.log("User authenticated:", authData.user);
-    
-    // Navigate to success page
-    router.push("/success");
-  };
+  }
 
   return (
-    <div className={styles.container}>
-      <button className={styles.closeButton} type="button">
-        ✕
-      </button>
-      
-      <div className={styles.content}>
-        <div className={styles.waitlistForm}>
-          <h1 className={styles.title}>Join {farcasterConfig.miniapp.name.toUpperCase()}</h1>
-          
-          <p className={styles.subtitle}>
-             Hey {context?.user?.displayName || "there"}, Get early access and be the first to experience the future of<br />
-            crypto marketing strategy.
-          </p>
+    <main style={{ padding: 20, fontFamily: "sans-serif" }}>
+      <h1>⛽ Base Gas Buddy</h1>
+      <p>Is now a good time to transact?</p>
 
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <input
-              type="email"
-              placeholder="Your amazing email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={styles.emailInput}
-            />
-            
-            {error && <p className={styles.error}>{error}</p>}
-            
-            <button type="submit" className={styles.joinButton}>
-              JOIN WAITLIST
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+      <hr />
+
+      <h2>{status}</h2>
+
+      <p><strong>Current:</strong> {current ?? "-"} gwei</p>
+      <p><strong>Low:</strong> {low ?? "-"} gwei</p>
+      <p><strong>Average:</strong> {avg ?? "-"} gwei</p>
+      <p><strong>High:</strong> {high ?? "-"} gwei</p>
+
+      <button onClick={loadGas} style={{ marginTop: 20 }}>
+        Refresh
+      </button>
+    </main>
   );
 }
