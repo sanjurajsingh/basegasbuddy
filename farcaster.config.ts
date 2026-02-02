@@ -18,6 +18,9 @@ export const farcasterConfig = {
     primaryCategory: "finance",
     tags: ["base", "gas", "fees", "tools"],
     homeUrl: ROOT_URL,
+
+    // 🔴 THIS WAS MISSING
+    heroImageUrl: `${ROOT_URL}/hero.png`,
   },
 };
 
