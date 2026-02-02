@@ -2,70 +2,62 @@
 
 import { useEffect, useState } from "react";
 
-const BASE_RPC = "https://mainnet.base.org";
+type GasData = {
+  current: number;
+  low: number;
+  average: number;
+  high: number;
+};
 
-export default function Home() {
-  const [current, setCurrent] = useState<number | null>(null);
-  const [low, setLow] = useState<number | null>(null);
-  const [avg, setAvg] = useState<number | null>(null);
-  const [high, setHigh] = useState<number | null>(null);
-  const [status, setStatus] = useState("Loading...");
+export default function HomePage() {
+  const [gas, setGas] = useState<GasData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadGas();
-  }, []);
-
-  async function loadGas() {
+  async function fetchGas() {
     try {
-      const res = await fetch(BASE_RPC, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "eth_feeHistory",
-          params: ["0x500", "latest", []], // recent blocks
-        }),
-      });
+      setLoading(true);
+      setError(null);
 
-      const json = await res.json();
-      const fees = json.result.baseFeePerGas.map(
-        (v: string) => parseInt(v, 16) / 1e9
-      );
+      const res = await fetch("/api/gas", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to fetch gas data");
 
-      const cur = fees[fees.length - 1];
-      const min = Math.min(...fees);
-      const max = Math.max(...fees);
-      const average = fees.reduce((a: number, b: number) => a + b, 0) / fees.length;
-
-      setCurrent(+cur.toFixed(2));
-      setLow(+min.toFixed(2));
-      setHigh(+max.toFixed(2));
-      setAvg(+average.toFixed(2));
-
-      if (cur <= average) setStatus("🟢 SEND NOW");
-      else if (cur < max) setStatus("🟡 WAIT");
-      else setStatus("🔴 EXPENSIVE");
-    } catch (e) {
-      setStatus("Failed to load gas");
+      const data = await res.json();
+      setGas(data);
+    } catch (err) {
+      setError("Unable to load gas data");
+    } finally {
+      setLoading(false);
     }
   }
 
+  useEffect(() => {
+    fetchGas();
+  }, []);
+
+  const decision =
+    gas && gas.current <= gas.average ? "SEND NOW 🚀" : "WAIT ⏳";
+
   return (
-    <main style={{ padding: 20, fontFamily: "sans-serif" }}>
+    <main style={{ padding: "16px", fontFamily: "monospace" }}>
       <h1>⛽ Base Gas Buddy</h1>
       <p>Is now a good time to transact?</p>
 
-      <hr />
+      {loading && <p>Loading gas data…</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <h2>{status}</h2>
+      {gas && (
+        <>
+          <h2>{decision}</h2>
 
-      <p><strong>Current:</strong> {current ?? "-"} gwei</p>
-      <p><strong>Low:</strong> {low ?? "-"} gwei</p>
-      <p><strong>Average:</strong> {avg ?? "-"} gwei</p>
-      <p><strong>High:</strong> {high ?? "-"} gwei</p>
+          <p>Current: {gas.current.toFixed(4)} gwei</p>
+          <p>Low: {gas.low.toFixed(4)} gwei</p>
+          <p>Average: {gas.average.toFixed(4)} gwei</p>
+          <p>High: {gas.high.toFixed(4)} gwei</p>
+        </>
+      )}
 
-      <button onClick={loadGas} style={{ marginTop: 20 }}>
+      <button onClick={fetchGas} style={{ marginTop: "12px" }}>
         Refresh
       </button>
     </main>
