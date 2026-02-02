@@ -4,11 +4,6 @@ const ROOT_URL =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "http://localhost:3000");
 
-/**
- * MiniApp configuration object. Must follow the Farcaster MiniApp specification.
- *
- * @see https://miniapps.farcaster.xyz/docs/guides/publishing
- */
 export const farcasterConfig = {
   accountAssociation: {
     header: "",
