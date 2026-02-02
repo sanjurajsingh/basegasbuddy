@@ -1,0 +1,10 @@
+export const minikitConfig = {
+  accountAssociation: {
+    header: "eyJmaWQiOjQ5NTk0NywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDAzQkY5NzljNmYyNTI2ZkI3MzZhNmZkN2YwNzRDYTBjMGIxQ0I3MUUifQ",
+    payload: "eyJkb21haW4iOiJiYXNlZ2FzYnVkZHkudmVyY2VsLmFwcCJ9",
+    signature: "SGGm85VDVL+cljWQtuYbmu41iqglP36hufvJnFfGFqRfnmPYtnNqH1tROBH+69Un9arw94+PekH/BzUULmG75Rs="
+  },
+  frame: {
+    version: "vNext"
+  }
+};
