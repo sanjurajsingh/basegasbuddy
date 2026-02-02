@@ -46,6 +46,6 @@ No financial advice
 
 No wallet custody
 
-Not affiliated with Coinbase or Base beyond platform usage
+Not affiliated with Coinbase or Base beyond platform usage.
 
 Gas data is provided as-is and should not be considered a guarantee of transaction outcomes.
