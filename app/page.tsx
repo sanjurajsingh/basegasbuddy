@@ -9,57 +9,55 @@ type GasData = {
   high: number;
 };
 
-export default function HomePage() {
+export default function Home() {
   const [gas, setGas] = useState<GasData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function fetchGas() {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const res = await fetch("/api/gas", { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to fetch gas data");
-
-      const data = await res.json();
-      setGas(data);
-    } catch (err) {
-      setError("Unable to load gas data");
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetchGas();
+    fetch("/api/gas")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed");
+        return res.json();
+      })
+      .then((data) => setGas(data))
+      .catch(() => setError(true));
   }, []);
 
-  const decision =
-    gas && gas.current <= gas.average ? "SEND NOW 🚀" : "WAIT ⏳";
+  if (error) {
+    return (
+      <div style={{ padding: 24 }}>
+        <h1>⛽ Base Gas Buddy</h1>
+        <p>Unable to load gas data</p>
+        <button onClick={() => location.reload()}>Refresh</button>
+      </div>
+    );
+  }
+
+  if (!gas) {
+    return (
+      <div style={{ padding: 24 }}>
+        <h1>⛽ Base Gas Buddy</h1>
+        <p>Loading gas data…</p>
+      </div>
+    );
+  }
+
+  const shouldSend = gas.current <= gas.average;
 
   return (
-    <main style={{ padding: "16px", fontFamily: "monospace" }}>
+    <div style={{ padding: 24 }}>
       <h1>⛽ Base Gas Buddy</h1>
       <p>Is now a good time to transact?</p>
 
-      {loading && <p>Loading gas data…</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <h2>{gas.current.toFixed(4)} gwei</h2>
 
-      {gas && (
-        <>
-          <h2>{decision}</h2>
+      <ul>
+        <li>Low (24h): {gas.low.toFixed(4)}</li>
+        <li>Average: {gas.average.toFixed(4)}</li>
+        <li>High: {gas.high.toFixed(4)}</li>
+      </ul>
 
-          <p>Current: {gas.current.toFixed(4)} gwei</p>
-          <p>Low: {gas.low.toFixed(4)} gwei</p>
-          <p>Average: {gas.average.toFixed(4)} gwei</p>
-          <p>High: {gas.high.toFixed(4)} gwei</p>
-        </>
-      )}
-
-      <button onClick={fetchGas} style={{ marginTop: "12px" }}>
-        Refresh
-      </button>
-    </main>
+      <h2>{shouldSend ? "✅ SEND NOW" : "⏳ WAIT"}</h2>
+    </div>
   );
 }
