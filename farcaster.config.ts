@@ -13,12 +13,15 @@ export const farcasterConfig = {
     payload: "",
     signature: ""
   },
- miniapp: {
-  version: "1",
-  name: "Base Gas Buddy",
-  subtitle: "Is now a good time to transact?",
-  description: "Real-time Base gas tracker with send or wait guidance.",
-  primaryCategory: "finance",
-  tags: ["base", "gas", "fees", "tools"],
-}
+ export const farcasterConfig = {
+  miniapp: {
+    version: "1",
+    name: "Base Gas Buddy",
+    subtitle: "Is now a good time to transact?",
+    description: "Real-time Base gas tracker with send or wait guidance.",
+    primaryCategory: "finance",
+    tags: ["base", "gas", "fees", "tools"],
+  },
+};
 
+export default farcasterConfig;
